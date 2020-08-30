@@ -47,7 +47,7 @@ public class MailClient {
             // 允许发送的文本支持 html 格式
             helper.setText(content, true);
             mailSender.send(helper.getMimeMessage());
-
+            System.out.println("send success");
         } catch (MessagingException e) {
             logger.error("发送右键失败" + e.getMessage());
         }
