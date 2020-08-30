@@ -1,0 +1,23 @@
+package com.nowcoder.community.dao;
+
+import com.nowcoder.community.entity.DiscussPost;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
+@Mapper
+public interface DiscussPostMapper {
+
+    // 延展到 将来查询自己的所有帖子, 所以增加参数 userId,
+    // 如果只是获取所有讨论内容, 可以无参
+    // 增加分页考虑: MySQL 用的是 limit 方法 需要两个参数: int offset[每页起始行, 行号], int limit[每页最多显示条数]
+    List<DiscussPost> selectDiscussPosts(int userId,int offset, int limit);
+
+    // 查询帖子行数
+    // @Parm 注解用于给参数取别名
+    // 如果需要动态 sql  <if> 里面使用, 并且该方法有且只有一个参数, 这个参数必须取别名
+    int selectDiscussPostRows(@Param("userId") int userId);
+
+
+}
