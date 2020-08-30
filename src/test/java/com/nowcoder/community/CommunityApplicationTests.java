@@ -30,35 +30,35 @@ public class CommunityApplicationTests implements ApplicationContextAware {
 		this.applicationContext = applicationContext;
 	}
 
-	@Test
-	public void testApplicationContext(){
-		System.out.println(applicationContext);
+//	@Test
+//	public void testApplicationContext(){
+//		System.out.println(applicationContext);
+//
+//		AlphaDao alphaDao = applicationContext.getBean(AlphaDao.class);
+//		System.out.println(alphaDao.select());
+//
+//		System.out.println("----------------------------");
+//
+//		alphaDao =applicationContext.getBean("alphaHibernate",AlphaDao.class);
+//		System.out.println(alphaDao.select());
+//	}
 
-		AlphaDao alphaDao = applicationContext.getBean(AlphaDao.class);
-		System.out.println(alphaDao.select());
 
-		System.out.println("----------------------------");
+//	@Test
+//	public void testBeanManagement(){
+//
+//		AlphaService alphaService = applicationContext.getBean(AlphaService.class);
+//		System.out.println(alphaService);
+//
+//		alphaService = applicationContext.getBean(AlphaService.class);
+//		System.out.println(alphaService);
+//	}
 
-		alphaDao =applicationContext.getBean("alphaHibernate",AlphaDao.class);
-		System.out.println(alphaDao.select());
-	}
-
-
-	@Test
-	public void testBeanManagement(){
-
-		AlphaService alphaService = applicationContext.getBean(AlphaService.class);
-		System.out.println(alphaService);
-
-		alphaService = applicationContext.getBean(AlphaService.class);
-		System.out.println(alphaService);
-	}
-
-	@Test
-	public void testBeanConfig(){
-		SimpleDateFormat simpleDateFormat=applicationContext.getBean(SimpleDateFormat.class);
-		System.out.println(simpleDateFormat.format(new Date()));
-	}
+//	@Test
+//	public void testBeanConfig(){
+//		SimpleDateFormat simpleDateFormat=applicationContext.getBean(SimpleDateFormat.class);
+//		System.out.println(simpleDateFormat.format(new Date()));
+//	}
 
 	@Autowired
 	@Qualifier("alphaHibernate")
@@ -70,12 +70,12 @@ public class CommunityApplicationTests implements ApplicationContextAware {
 	@Autowired
 	private SimpleDateFormat simpleDateFormat;
 
-	@Test
-	public void testDI(){
-		System.out.println(alphaDao);
-		System.out.println(alphaService);
-		System.out.println(simpleDateFormat);
-	}
+//	@Test
+//	public void testDI(){
+//		System.out.println(alphaDao);
+//		System.out.println(alphaService);
+//		System.out.println(simpleDateFormat);
+//	}
 
 
 }
