@@ -4,7 +4,7 @@ public interface CommunityConstant {
 
     /**
      *  This interface to define some Activity Status
-     *
+     *  定义激活状态的接口
      */
 
     // Activity Success
