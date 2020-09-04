@@ -2,6 +2,9 @@ package com.nowcoder.community.entity;
 
 import java.util.Date;
 
+/**
+ * 登陆凭证的实体类
+ */
 public class LoginTicket {
 
     private int id;
