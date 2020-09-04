@@ -3,16 +3,28 @@ package com.nowcoder.community.util;
 public interface CommunityConstant {
 
     /**
-     *  This interface to define some Activity Status
-     *  定义激活状态的接口
+     * This interface to define some Activity Status
+     * 定义激活状态的接口
      */
 
-    // Activity Success
+    // 激活成功
     int ACTIVATION_SUCCESS = 0;
 
-    // Multiple Activity
+    // 重复激活
     int ACTIVATION_REPEAT = 1;
 
-    // Activity Fail
+    // 激活失败
     int ACTIVATION_FAILURE = 2;
+
+    /**
+     * 默认状态的登录凭证的超时时间
+     * 默认 12h
+     */
+
+    int DEFAULT_EXPIRED_SECONDS = 3600 * 12;
+    /**
+     * 记住状态(勾选记住我)下的登陆凭证超时时间
+     * 默认100天
+     */
+    int REMEMBER_EXPIRED_SECONDS = 3600 * 24 * 100;
 }
