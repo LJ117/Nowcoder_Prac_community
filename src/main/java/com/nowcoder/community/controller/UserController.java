@@ -107,4 +107,36 @@ public class UserController {
         }
     }
 
+    @RequestMapping(path = "/updatePassword", method = RequestMethod.POST)
+    public String updatePassword(String oldPwd, String newPwd_1, String newPwd_2, Model model) {
+
+        User user = hostHolder.getUser();
+
+        // 检验旧密码是否为空
+        if (StringUtils.isBlank(oldPwd)){
+            model.addAttribute("passwordError","密码不能为空");
+            return "/site/setting";
+        }
+
+        // 校验输入密码是否与当前用户旧密码匹配
+        // CommunityUtil.md5(输入密码 + 盐) 处理 才能与数据库中加密的密码作比较
+        String originalPassword = user.getPassword();
+        String inputPassword = CommunityUtil.md5(oldPwd+user.getSalt());
+        if (!inputPassword.equals(originalPassword)){
+            model.addAttribute("passwordError","输入旧密码错误!");
+            return "/site/setting";
+        }
+
+        // 校验两次输入的新密码是否正确
+        if (!newPwd_1.equals(newPwd_2)){
+            model.addAttribute("passwordError","两次输入的新密码不一致!");
+            return "/site/setting";
+        }
+        String newPwd = newPwd_1+user.getSalt();
+        userService.updatePassword(user.getId(),CommunityUtil.md5(newPwd));
+
+        // 修改成功,返回首页
+        return "redirect:/index";
+    }
+
 }
