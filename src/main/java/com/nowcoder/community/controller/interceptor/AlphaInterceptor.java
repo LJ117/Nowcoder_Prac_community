@@ -12,23 +12,22 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 public class AlphaInterceptor implements HandlerInterceptor {
 
-
     private static final Logger logger = LoggerFactory.getLogger(AlphaInterceptor.class);
 
-    // 在Controller 之前执行
+    // 在Controller之前执行
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         logger.debug("preHandle: " + handler.toString());
         return true;
     }
 
-    // 在调用Controller 之后, 模板之前 执行
+    // 在Controller之后执行
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
         logger.debug("postHandle: " + handler.toString());
     }
 
-    // 在 TemplateEngine 模板之后, 最后执行
+    // 在TemplateEngine之后执行
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         logger.debug("afterCompletion: " + handler.toString());
