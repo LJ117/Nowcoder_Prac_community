@@ -200,4 +200,15 @@ public class AlphaController {
         System.out.println(session.getAttribute("name"));
         return "get session";
     }
+
+    // ajax 示例
+    // 一般 异步请求,都会提交数据, 故请求选用 POST 方式
+    // 异步请求, 直接在当前页面返回 消息, 故 要加上 @ResponseBody 注解
+    @RequestMapping(path = "/ajax",method = RequestMethod.POST)
+    @ResponseBody
+    public String testAjax(String name,int age){
+        System.out.println(name);
+        System.out.println(age);
+        return CommunityUtil.getJSONString(0,"操作成功");
+    }
 }

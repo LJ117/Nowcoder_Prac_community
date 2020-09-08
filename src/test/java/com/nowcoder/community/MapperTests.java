@@ -34,7 +34,7 @@ public class MapperTests {
     @Test
     public void testSelectUser() {
         User user;
-        user = (User) userMapper.selectById(101);
+        user = userMapper.selectById(101);
         System.out.println(user);
 
         user = userMapper.selectByName("www");
@@ -113,5 +113,12 @@ public class MapperTests {
     @Test
     public void showMD5P(){
         System.out.println(CommunityUtil.md5("1234f7b01"));
+    }
+
+    @Test
+    public void testInsertDiscussPost(){
+        DiscussPost discussPost = new DiscussPost();
+        discussPost.setContent("帖子插入测试文件");
+        System.out.println(discussPostMapper.insertDiscussPost(discussPost));
     }
 }

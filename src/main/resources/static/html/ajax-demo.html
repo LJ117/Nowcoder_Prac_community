@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ajax</title>
+</head>
+<body>
+    <p>
+        <input type="button" value="发送" onclick="send();">
+    </p>
+
+
+    <!--  通过 百度的CDN 引入 jQuery  -->
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js">
+    </script>
+
+    <script>
+        function send() {
+            $.post(
+                // 一般有三个参数, 用 "," 完成参数分割:
+                // 1.访问路径
+                "/community/alpha/ajax",
+
+                // 2.向服务器提交的数据__ JSON 格式 {"xxx":"xxx" , "xyz":"xyz"}
+                {"name":"张三","age":23},
+
+                // 3.回调函数, 匿名的; 浏览器的到服务器响应后自动调用, 并且会将服务器返回的数据传给 data
+                function (data) {
+                    // 控制台打印输出 data 类型
+                    console.log(typeof (data));
+                    // 打印 data 的内容
+                    console.log(data);
+
+                    // 将字符串转换成 js 对象
+                    data = $.parseJSON(data);
+                    console.log(typeof (data));
+                    console.log(data.code);
+                    console.log(data.msg);
+                }
+            );
+        }
+    </script>
+</body>
+</html>

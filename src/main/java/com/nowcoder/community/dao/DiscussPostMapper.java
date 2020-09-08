@@ -20,4 +20,10 @@ public interface DiscussPostMapper {
     int selectDiscussPostRows(@Param("userId") int userId);
 
 
+    // 增加帖子, 发布新帖
+    // 唯一参数: 帖子对象
+    int insertDiscussPost(DiscussPost discussPost);
+
+    // 根据帖子的 id 查询帖子详情
+    DiscussPost selectDiscussPostById(int id);
 }
