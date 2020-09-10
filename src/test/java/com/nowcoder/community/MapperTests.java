@@ -2,9 +2,11 @@ package com.nowcoder.community;
 
 import com.nowcoder.community.dao.DiscussPostMapper;
 import com.nowcoder.community.dao.LoginTicketMapper;
+import com.nowcoder.community.dao.MessageMapper;
 import com.nowcoder.community.dao.UserMapper;
 import com.nowcoder.community.entity.DiscussPost;
 import com.nowcoder.community.entity.LoginTicket;
+import com.nowcoder.community.entity.Message;
 import com.nowcoder.community.entity.User;
 import com.nowcoder.community.util.CommunityUtil;
 import org.junit.Test;
@@ -30,6 +32,9 @@ public class MapperTests {
 
     @Autowired
     private LoginTicketMapper loginTicketMapper;
+
+    @Autowired
+    private MessageMapper messageMapper;
 
     @Test
     public void testSelectUser() {
@@ -90,35 +95,56 @@ public class MapperTests {
     }
 
     @Test
-    public void testInsertLoginTicket(){
+    public void testInsertLoginTicket() {
         LoginTicket loginTicket = new LoginTicket();
         loginTicket.setUserId(101);
         loginTicket.setTicket("abc");
         loginTicket.setStatus(0);
-        loginTicket.setExpired(new Date(System.currentTimeMillis()+1000*60*10));
+        loginTicket.setExpired(new Date(System.currentTimeMillis() + 1000 * 60 * 10));
 
         int i = loginTicketMapper.insertLoginTicket(loginTicket);
-        System.out.println("InsertLoginTicket: "+i);
+        System.out.println("InsertLoginTicket: " + i);
     }
 
     @Test
-    public void testSelectLoginTicket(){
+    public void testSelectLoginTicket() {
         LoginTicket loginTicket = loginTicketMapper.selectByTicket("abc");
-        System.out.println("before: "+loginTicket);
-        loginTicketMapper.updateStatus("abc",1);
-        loginTicket=loginTicketMapper.selectByTicket("abc");
-        System.out.println("after: "+loginTicket);
+        System.out.println("before: " + loginTicket);
+        loginTicketMapper.updateStatus("abc", 1);
+        loginTicket = loginTicketMapper.selectByTicket("abc");
+        System.out.println("after: " + loginTicket);
     }
 
     @Test
-    public void showMD5P(){
+    public void showMD5P() {
         System.out.println(CommunityUtil.md5("1234f7b01"));
     }
 
     @Test
-    public void testInsertDiscussPost(){
+    public void testInsertDiscussPost() {
         DiscussPost discussPost = new DiscussPost();
         discussPost.setContent("帖子插入测试文件");
         System.out.println(discussPostMapper.insertDiscussPost(discussPost));
+    }
+
+    @Test
+    public void testSelectLetters() {
+        List<Message> list = messageMapper.selectConversations(111, 0, 20);
+        for (Message message : list) {
+            System.out.println(message);
+        }
+
+        System.out.println(messageMapper.selectConversationCount(111));
+
+        list = messageMapper.selectLetters("111_112", 0, 10);
+        for (Message message : list) {
+            System.out.println(message);
+        }
+
+        System.out.println("会话111_112 共有: " + messageMapper.selectLetterCount("111_112") + " 条");
+
+        System.out.println("131收到来自111的未读信息有: " + messageMapper.selectLetterUnreadCount(131, "111_131") + " 条");
+
+
     }
 }
