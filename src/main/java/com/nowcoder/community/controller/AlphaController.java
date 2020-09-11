@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
 
-@Controller
+//@Controller
 @RequestMapping("/alpha")
 public class AlphaController {
 

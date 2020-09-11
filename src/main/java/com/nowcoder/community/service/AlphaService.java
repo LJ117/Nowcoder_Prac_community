@@ -20,7 +20,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.Date;
 
-@Service
+//@Service
 //@Scope("prototype")
 public class AlphaService {
 
