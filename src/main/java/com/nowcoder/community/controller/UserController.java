@@ -2,6 +2,7 @@ package com.nowcoder.community.controller;
 
 import com.nowcoder.community.annotation.LoginRequired;
 import com.nowcoder.community.entity.User;
+import com.nowcoder.community.service.LikeService;
 import com.nowcoder.community.service.UserService;
 import com.nowcoder.community.util.CommunityUtil;
 import com.nowcoder.community.util.HostHolder;
@@ -44,6 +45,8 @@ public class UserController {
     @Autowired
     private HostHolder hostHolder;
 
+    @Autowired
+    private LikeService likeService;
 
     @LoginRequired
     @RequestMapping(path = "/setting", method = RequestMethod.GET)
@@ -115,30 +118,51 @@ public class UserController {
         User user = hostHolder.getUser();
 
         // 检验旧密码是否为空
-        if (StringUtils.isBlank(oldPwd)){
-            model.addAttribute("passwordError","密码不能为空");
+        if (StringUtils.isBlank(oldPwd)) {
+            model.addAttribute("passwordError", "密码不能为空");
             return "/site/setting";
         }
 
         // 校验输入密码是否与当前用户旧密码匹配
         // CommunityUtil.md5(输入密码 + 盐) 处理 才能与数据库中加密的密码作比较
         String originalPassword = user.getPassword();
-        String inputPassword = CommunityUtil.md5(oldPwd+user.getSalt());
-        if (!inputPassword.equals(originalPassword)){
-            model.addAttribute("passwordError","输入旧密码错误!");
+        String inputPassword = CommunityUtil.md5(oldPwd + user.getSalt());
+        if (!inputPassword.equals(originalPassword)) {
+            model.addAttribute("passwordError", "输入旧密码错误!");
             return "/site/setting";
         }
 
         // 校验两次输入的新密码是否正确
-        if (!newPwd_1.equals(newPwd_2)){
-            model.addAttribute("passwordError","两次输入的新密码不一致!");
+        if (!newPwd_1.equals(newPwd_2)) {
+            model.addAttribute("passwordError", "两次输入的新密码不一致!");
             return "/site/setting";
         }
-        String newPwd = newPwd_1+user.getSalt();
-        userService.updatePassword(user.getId(),CommunityUtil.md5(newPwd));
+        String newPwd = newPwd_1 + user.getSalt();
+        userService.updatePassword(user.getId(), CommunityUtil.md5(newPwd));
 
         // 修改成功,返回首页
         return "redirect:/index";
     }
+
+    // 个人主页
+    // 可以显示任意用户的主页[不限于当前用户]
+    @RequestMapping(path = "/profile/{userId}", method = RequestMethod.GET)
+    public String getProfilePage(@PathVariable("userId") int userId, Model model) {
+        User user = userService.findUserById(userId);
+        if (user == null) {
+            // 直接抛出异常, 防止有人恶意查询 对服务器攻击
+            throw new RuntimeException("该用户不存在");
+        }
+
+        // 用户基本信息
+        model.addAttribute("user", user);
+        // 用户获赞总数
+        int likeCount = likeService.findUserLikeCount(userId);
+        model.addAttribute("likeCount",likeCount);
+
+        return "/site/profile";
+
+    }
+
 
 }
