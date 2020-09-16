@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.*;
  * 这个 Mapper的实现方式 为 : 注解方法实现
  */
 @Mapper
+@Deprecated // 声明这个组件不推荐使用
 public interface LoginTicketMapper {
 
     // 插入数据
