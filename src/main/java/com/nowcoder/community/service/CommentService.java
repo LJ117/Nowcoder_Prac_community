@@ -15,6 +15,7 @@ import java.util.List;
 
 @Service
 public class CommentService implements CommunityConstant {
+
     @Autowired
     private CommentMapper commentMapper;
 
@@ -23,6 +24,10 @@ public class CommentService implements CommunityConstant {
 
     @Autowired
     private DiscussPostService discussPostService;
+
+    public Comment findCommentById(int id){
+        return commentMapper.selectCommentById(id);
+    }
 
     // 查询某页数据
     public List<Comment> findCommentsByEntity(int entityType, int entityId, int offset, int limit) {
