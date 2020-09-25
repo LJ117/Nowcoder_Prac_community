@@ -58,6 +58,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Comm
                         AUTHORITY_ADMIN,
                         AUTHORITY_MODERATOR
                 )
+                .antMatchers(
+                        // 置顶 和 加精权限控制
+                        "/discuss/top",
+                        "/discuss/wonderful"
+                )
+                .hasAnyAuthority(
+                        // 版主才能 置顶加精
+                        AUTHORITY_MODERATOR
+                )
+                .antMatchers(
+                        // 删帖权限控制
+                        "/discuss/delete"
+                )
+                .hasAnyAuthority(
+                        // 只有管理员才能删帖
+                        AUTHORITY_ADMIN
+                )
                 // 其他的所有请求, 统统都允许[即不指定权限, 都可访问]
                 .anyRequest().permitAll()
                 // 取消 csrf 认证, 仅仅因为项目演示需求, 如果需要自己在需要配置的: 页面配置即可
@@ -70,7 +87,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Comm
                           @Override
                           public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException e) throws IOException, ServletException {
                               // 判断当前请求是 同步 还是 异步
-                              String xRequestedWith = request.getHeader("x-requested with");
+                              String xRequestedWith = request.getHeader("x-requested-with");
                               if ("XMLHttpRequest".equals(xRequestedWith)) {
                                   // 如果是这个值, 则是异步请求
                                   response.setContentType("application/plain;charset=utf-8");
@@ -87,7 +104,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Comm
                     @Override
                     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException e) throws IOException, ServletException {
                         // 判断当前请求是 同步 还是 异步
-                        String xRequestedWith = request.getHeader("x-requested with");
+                        String xRequestedWith = request.getHeader("x-requested-with");
                         if ("XMLHttpRequest".equals(xRequestedWith)) {
                             // 如果是这个值, 则是异步请求
                             response.setContentType("application/plain;charset=utf-8");
