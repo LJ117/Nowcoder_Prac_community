@@ -69,7 +69,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Comm
                 )
                 .antMatchers(
                         // 删帖权限控制
-                        "/discuss/delete"
+                        "/discuss/delete",
+                        // 查看网页访问数据
+                        "/data/**"
                 )
                 .hasAnyAuthority(
                         // 只有管理员才能删帖

@@ -5,10 +5,9 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataAccessException;
-import org.springframework.data.redis.core.BoundValueOperations;
-import org.springframework.data.redis.core.RedisOperations;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.SessionCallback;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.connection.RedisStringCommands;
+import org.springframework.data.redis.core.*;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -159,9 +158,9 @@ public class RedisTests {
                 // 启用事务
                 operations.multi();
 
-                operations.opsForSet().add(redisKey,"张三");
-                operations.opsForSet().add(redisKey,"李四");
-                operations.opsForSet().add(redisKey,"王五");
+                operations.opsForSet().add(redisKey, "张三");
+                operations.opsForSet().add(redisKey, "李四");
+                operations.opsForSet().add(redisKey, "王五");
 
                 // 事务过程是不能允许读的
                 System.out.println(operations.opsForSet().members(redisKey));
@@ -171,6 +170,110 @@ public class RedisTests {
         });
 
         System.out.println(obj);
+    }
+
+    // 统计 20 万个重复数据的独立总数
+    @Test
+    public void testHyperLogLog() {
+        String redisKey = "test:hll:01";
+
+        for (int i = 1; i < 100000; i++) {
+            redisTemplate.opsForHyperLogLog().add(redisKey, i);
+        }
+
+        for (int i = 1; i < 100000; i++) {
+            int r = (int) (Math.random() * 10000 + 1);
+            redisTemplate.opsForHyperLogLog().add(redisKey, r);
+        }
+
+        System.out.println(redisTemplate.opsForHyperLogLog().size(redisKey));
+    }
+
+    // 将 3 组数据合并, 再统计合并后总数据里的独立总数
+    @Test
+    public void testHyperLogLogUnion(){
+        String redisKey2 = "test:hll:02";
+        for (int i = 1; i < 10001; i++) {
+            redisTemplate.opsForHyperLogLog().add(redisKey2,i);
+        }
+        String redisKey3 = "test:hll:03";
+        for (int i = 5001; i < 15001; i++) {
+            redisTemplate.opsForHyperLogLog().add(redisKey3,i);
+        }
+        String redisKey4 = "test:hll:04";
+        for (int i = 10001; i < 20001; i++) {
+            redisTemplate.opsForHyperLogLog().add(redisKey4,i);
+        }
+
+        String unionKey = "test:hll:union";
+        redisTemplate.opsForHyperLogLog().union(unionKey,redisKey2,redisKey3,redisKey4);
+        System.out.println(redisTemplate.opsForHyperLogLog().size(unionKey));
+
+    }
+
+
+    // 统计一组数据的布尔值
+    @Test
+    public void testBitmap(){
+        String redisKey = "test:bmap:01";
+
+        // 记录 [默认位置是 false]
+        redisTemplate.opsForValue().setBit(redisKey,1,true);
+        redisTemplate.opsForValue().setBit(redisKey,4,true);
+        redisTemplate.opsForValue().setBit(redisKey,7,true);
+
+        // 查询
+        System.out.println(redisTemplate.opsForValue().getBit(redisKey, 0));
+        System.out.println(redisTemplate.opsForValue().getBit(redisKey, 1));
+        System.out.println(redisTemplate.opsForValue().getBit(redisKey, 2));
+
+        // 统计 [ 通过 Redis 底层链接获取 ]
+        Object obj = redisTemplate.execute(new RedisCallback() {
+            @Override
+            public Object doInRedis(RedisConnection connection) throws DataAccessException {
+                // 统计数组中 1 的个数
+                return connection.bitCount(redisKey.getBytes());
+            }
+        });
+
+        System.out.println(obj);
+    }
+
+
+    // 统计三组数据的布尔值, 并对三组数据做 OR 运算 [ 或运算, 只有双 0 ---> 0]
+    @Test
+    public void testBitMapOperation(){
+      String redisKey2 = "test:bmap:02";
+      redisTemplate.opsForValue().setBit(redisKey2,0,true);
+      redisTemplate.opsForValue().setBit(redisKey2,1,true);
+      redisTemplate.opsForValue().setBit(redisKey2,2,true);
+
+        String redisKey3 = "test:bmap:03";
+        redisTemplate.opsForValue().setBit(redisKey3,2,true);
+        redisTemplate.opsForValue().setBit(redisKey3,3,true);
+        redisTemplate.opsForValue().setBit(redisKey3,4,true);
+
+        String redisKey4 = "test:bmap:04";
+        redisTemplate.opsForValue().setBit(redisKey4,4,true);
+        redisTemplate.opsForValue().setBit(redisKey4,5,true);
+        redisTemplate.opsForValue().setBit(redisKey4,6,true);
+
+        String redisKey = "test:bmap:or";
+        Object obj = redisTemplate.execute(new RedisCallback() {
+            @Override
+            public Object doInRedis(RedisConnection connection) throws DataAccessException {
+                // 参数: 指定逻辑运算方式, 存储运算结果的 key,参与逻辑运算的 bit数组
+                connection.bitOp(RedisStringCommands.BitOperation.OR,
+                        redisKey.getBytes(),redisKey2.getBytes(),redisKey3.getBytes(),redisKey4.getBytes());
+                return connection.bitCount(redisKey.getBytes());
+            }
+        });
+
+        System.out.println(obj);
+        for (int i = 0; i < 7; i++) {
+            System.out.println(redisTemplate.opsForValue().getBit(redisKey, i));
+        }
+
     }
 
 }
