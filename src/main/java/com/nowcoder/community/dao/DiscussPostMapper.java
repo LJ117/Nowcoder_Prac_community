@@ -12,7 +12,7 @@ public interface DiscussPostMapper {
     // 延展到 将来查询自己的所有帖子, 所以增加参数 userId,
     // 如果只是获取所有讨论内容, 可以无参
     // 增加分页考虑: MySQL 用的是 limit 方法 需要两个参数: int offset[每页起始行, 行号], int limit[每页最多显示条数]
-    List<DiscussPost> selectDiscussPosts(int userId,int offset, int limit);
+    List<DiscussPost> selectDiscussPosts(int userId,int offset, int limit, int orderMode);
 
     // 查询帖子行数
     // @Parm 注解用于给参数取别名
@@ -40,4 +40,7 @@ public interface DiscussPostMapper {
 
     // 修改帖子状态
     int updateStatus(int id,int status);
+
+    // 修改帖子分数
+    int updateScore(int id,double score);
 }

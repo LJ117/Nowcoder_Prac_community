@@ -116,21 +116,21 @@ public class ThreadPoolTests {
     }
 
     // 5. Spring 普通线程池(简化使用方式)
-    @Test
-    public void testThreadPoolTaskExecutorSimple(){
-
-        for (int i = 0; i < 10; i++) {
-            alphaService.executor1();
-        }
-
-        sleep(10000);
-    }
+//    @Test
+//    public void testThreadPoolTaskExecutorSimple(){
+//
+//        for (int i = 0; i < 10; i++) {
+//            alphaService.executor1();
+//        }
+//
+//        sleep(10000);
+//    }
 
     // 6. Spring 定时任务线程池(简化)
-    @Test
-    public void testThreadPoolTaskSchedulerSimple() {
-        // 只要有任务启动, 定时任务会自己启动
-        // 带有@Scheduled 注释的任务, 会在任务启动被自动调用
-        sleep(30000);
-    }
+//    @Test
+//    public void testThreadPoolTaskSchedulerSimple() {
+//        // 只要有任务启动, 定时任务会自己启动
+//        // 带有@Scheduled 注释的任务, 会在任务启动被自动调用
+//        sleep(30000);
+//    }
 }
