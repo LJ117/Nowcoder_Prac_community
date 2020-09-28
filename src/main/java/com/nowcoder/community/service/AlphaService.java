@@ -6,7 +6,11 @@ import com.nowcoder.community.dao.UserMapper;
 import com.nowcoder.community.entity.DiscussPost;
 import com.nowcoder.community.entity.User;
 import com.nowcoder.community.util.CommunityUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -20,9 +24,11 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.Date;
 
-//@Service
+@Service
 //@Scope("prototype")
 public class AlphaService {
+
+    private static final Logger logger = LoggerFactory.getLogger(AlphaService.class);
 
     @Autowired
     private AlphaDao alphaDao;
@@ -37,21 +43,22 @@ public class AlphaService {
     @Autowired
     private TransactionTemplate transactionTemplate;
 
-    public AlphaService() {
-        System.out.println("实例化AlphaService");
-    }
+
+//    public AlphaService() {
+//        System.out.println("实例化AlphaService");
+//    }
 
     // 这个方法会在构造器之后调用
-    @PostConstruct
-    public void init() {
-        System.out.println("初始化AlphaService");
-    }
+//    @PostConstruct
+//    public void init() {
+//        System.out.println("初始化AlphaService");
+//    }
 
     // 在销毁对象之前调用
-    @PreDestroy
-    public void destroy() {
-        System.out.println("销毁AlphaService");
-    }
+//    @PreDestroy
+//    public void destroy() {
+//        System.out.println("销毁AlphaService");
+//    }
 
     // 模拟查询
     public String find() {
@@ -62,18 +69,18 @@ public class AlphaService {
     // @Transactional: Spring 自带的事务管理
     // 参数 isolation =  手动指定的隔离级别
     // 参数 propagation =  手动指定的事务传播机制, 下面是三个常用参数
-        // 事务传播机制: 解决 业务互相调用时, 隔离级别以谁为准的问题
-        // 例如: Service A 调用 Service B
-        // REQUIRED: 支持当前事务【Service A，又叫外部事物，调用我的调用者】，如果不存在，则创建新事务
-        // REQUIRES_NEW: 创建一个新的事务，并且暂停当前事务（外部事务），B 不管 A的事务，按自己的来
-        // NESTED: 如果当前存在事务【外部事务存在】，则嵌套在该事务中执行（B在执行时，有独立的提交和回滚），外部不存在则同 REQUIRED
+    // 事务传播机制: 解决 业务互相调用时, 隔离级别以谁为准的问题
+    // 例如: Service A 调用 Service B
+    // REQUIRED: 支持当前事务【Service A，又叫外部事物，调用我的调用者】，如果不存在，则创建新事务
+    // REQUIRES_NEW: 创建一个新的事务，并且暂停当前事务（外部事务），B 不管 A的事务，按自己的来
+    // NESTED: 如果当前存在事务【外部事务存在】，则嵌套在该事务中执行（B在执行时，有独立的提交和回滚），外部不存在则同 REQUIRED
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public Object save1() {
         // 新增用户
         User user = new User();
         user.setUsername("alpha");
         user.setSalt(CommunityUtil.generateUUID().substring(0, 5));
-        user.setPassword(CommunityUtil.md5("123"+user.getSalt()));
+        user.setPassword(CommunityUtil.md5("123" + user.getSalt()));
         user.setEmail("alpha@qq.com");
         user.setHeaderUrl("http://image.nowcoder.com/head/99t.png");
         user.setCreateTime(new Date());
@@ -94,7 +101,7 @@ public class AlphaService {
     }
 
 
-    public Object save2(){
+    public Object save2() {
         // 手动设置隔离级别(参数是定义好的常量)
         transactionTemplate.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED);
         // 手动设置事务传播机制(参数是定义好的常量)
@@ -110,7 +117,7 @@ public class AlphaService {
                 User user = new User();
                 user.setUsername("beta");
                 user.setSalt(CommunityUtil.generateUUID().substring(0, 5));
-                user.setPassword(CommunityUtil.md5("123"+user.getSalt()));
+                user.setPassword(CommunityUtil.md5("123" + user.getSalt()));
                 user.setEmail("beta@qq.com");
                 user.setHeaderUrl("http://image.nowcoder.com/head/199t.png");
                 user.setCreateTime(new Date());
@@ -129,5 +136,16 @@ public class AlphaService {
                 return "Ok";
             }
         });
+    }
+
+    // @Async: 注解, 可以让该方法在多线程环境下, 被异步的调用.
+    @Async
+    public void executor1(){
+        logger.debug("execute1");
+    }
+
+    @Scheduled(initialDelay = 10000,fixedRate = 1000)
+    public void executor2(){
+        logger.debug("executor2");
     }
 }
