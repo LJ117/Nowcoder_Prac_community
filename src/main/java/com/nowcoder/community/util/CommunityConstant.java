@@ -60,11 +60,6 @@ public interface CommunityConstant {
     String TOPIC_FOLLOW = "follow";
 
     /**
-     * 系统用户id
-     */
-    int SYSTEM_USER_ID = 1;
-
-    /**
      * 主题: 发帖
      */
     String TOPIC_PUBLISH = "publish";
@@ -73,6 +68,16 @@ public interface CommunityConstant {
      * 主题: 删帖
      */
     String TOPIC_DELETE = "delete";
+
+    /**
+     * 主题: 分享
+     */
+    String TOPIC_SHARE = "share";
+
+    /**
+     * 系统用户id
+     */
+    int SYSTEM_USER_ID = 1;
 
     /**
      * 权限: 普通用户
