@@ -71,7 +71,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Comm
                         // 删帖权限控制
                         "/discuss/delete",
                         // 查看网页访问数据
-                        "/data/**"
+                        "/data/**",
+                        "/actuator/**"
                 )
                 .hasAnyAuthority(
                         // 只有管理员才能删帖
